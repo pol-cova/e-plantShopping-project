@@ -9,27 +9,61 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
- 
+    let totalAmount = 0;
+    cart.forEach(item => {
+      const cost = parseFloat(item.cost.replace('$', '')); // Remove $ and convert to number
+      totalAmount += cost * Number(item.quantity);
+    });
+    return totalAmount.toFixed(2); // Ensure two decimal places
+  };
+  
+  const calculateTotalQuantity = () => {
+    let totalQuantity = 0;
+    cart.forEach(item => {
+      totalQuantity += item.quantity;
+    });
+    return totalQuantity;
   };
 
+
+
   const handleContinueShopping = (e) => {
-   
+    e.preventDefault();
+    //onContinueShopping();
+    let isContinue = window.confirm('You want to continue shopping?');
+    if (isContinue) {
+      // redirect to plants page
+      onContinueShopping();
+    } else {
+      // redirect to home page
+      window.location.href = '/e-plantShopping-project';
+    }
+    
   };
 
 
 
   const handleIncrement = (item) => {
+    dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
   const handleDecrement = (item) => {
-   
+    if (item.quantity === 1) {
+      dispatch(removeItem(item.name));
+    } else {
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    }
   };
 
   const handleRemove = (item) => {
+    dispatch(removeItem(item.name));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    const cost = parseFloat(item.cost.replace('$', '')); // Remove $ and convert to number
+    const quantity = Number(item.quantity) || 0;
+    return (cost * quantity).toFixed(2); // Fix decimal places
   };
 
   return (
